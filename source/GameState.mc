@@ -177,7 +177,7 @@ class GameState {
             return true;
         }
         var base = (Balance.CREW_BASE_COST as Array<Double>)[index];
-        return lifetimeEarned >= base * Balance.REVEAL_FRACTION;
+        return runEarned >= base * Balance.REVEAL_FRACTION;
     }
 
     //! Number of crew rows currently worth showing.
