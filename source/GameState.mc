@@ -166,6 +166,11 @@ class GameState {
 
     //! Crew types stay hidden until they are within reach, so the shop grows
     //! with the player instead of dumping nine rows on them at once.
+    //!
+    //! This is keyed on the current run rather than lifetime earnings: after a
+    //! detonation the shop should fold back down to the handful of tiers the
+    //! fresh run can actually afford, otherwise every post-prestige run opens
+    //! on a wall of rows priced far beyond the player's empty purse.
     function crewRevealed(index as Number) as Boolean {
         if (index == 0) {
             return true;

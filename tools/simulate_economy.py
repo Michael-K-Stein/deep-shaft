@@ -17,17 +17,19 @@ import argparse
 import math
 
 # --- mirrored from source/Balance.mc ---------------------------------------
-CREW_COUNT = 15
+CREW_COUNT = 17
 COST_GROWTH = 1.13
 CREW_BASE_COST = [15.0, 130.0, 1500.0, 18000.0, 240000.0,
                   3600000.0, 60000000.0, 1100000000.0, 25000000000.0,
                   600000000000.0, 17000000000000.0, 520000000000000.0,
                   18000000000000000.0, 700000000000000000.0,
-                  28000000000000000000.0]
+                  28000000000000000000.0, 1000000000000000000000.0,
+                  36000000000000000000000.0]
 CREW_BASE_RATE = [0.15, 1.2, 9.0, 70.0, 520.0,
                   4200.0, 38000.0, 380000.0, 4200000.0,
                   50000000.0, 650000000.0, 9100000000.0, 140000000000.0,
-                  2300000000000.0, 40000000000000.0]
+                  2300000000000.0, 40000000000000.0, 600000000000000.0,
+                  9000000000000000.0]
 REVEAL_FRACTION = 0.30
 
 MILESTONE_EVERY = 25
@@ -56,7 +58,8 @@ STRIKE_MIN_SWINGS = 12.0
 CREW_NAMES = ["Rusty Pick", "Shovel Crew", "Ore Cart", "Drill Rig", "Blast Team",
               "Excavator", "Laser Bore", "Quantum Auger", "Magma Tap",
               "Plasma Lance", "Gravity Well", "Rift Engine", "Star Forge",
-              "Quasar Drive", "Singularity Core"]
+              "Quasar Drive", "Singularity Core", "Galactic Maw",
+              "Aeon Engine"]
 LAYER_NAMES = ["Topsoil", "Clay", "Limestone", "Granite",
                "Obsidian", "Magma", "Crystal", "Neutronium",
                "Antimatter", "Singularity", "Genesis", "The Void"]
@@ -84,11 +87,14 @@ def multiplier(depth_level, gems):
     return (DEPTH_BONUS ** depth_level) * (1.0 + GEM_BONUS * gems)
 
 
-def crew_revealed(index, crew, lifetime):
-    """Mirror of GameState.crewRevealed - the shop only shows what is in reach."""
+def crew_revealed(index, crew, run_earned):
+    """Mirror of GameState.crewRevealed - the shop only shows what is in reach.
+
+    Keyed on the current run, not lifetime earnings, so a detonation folds the
+    shop back down to the tiers the fresh run can actually reach."""
     if index == 0 or crew[index] > 0 or crew[index - 1] > 0:
         return True
-    return lifetime >= CREW_BASE_COST[index] * REVEAL_FRACTION
+    return run_earned >= CREW_BASE_COST[index] * REVEAL_FRACTION
 
 
 def pending_gems(run_earned):
@@ -156,7 +162,7 @@ def simulate(hours, gems, taps_per_second, step=1.0):
             best_kind, best_index, best_ratio = None, -1, 0.0
 
             for i in range(CREW_COUNT):
-                if not crew_revealed(i, crew, lifetime):
+                if not crew_revealed(i, crew, run_earned):
                     continue
                 cost = crew_cost(i, crew[i])
                 if cost > gold:
