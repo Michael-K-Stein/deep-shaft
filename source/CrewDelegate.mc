@@ -37,13 +37,22 @@ class CrewDelegate extends WatchUi.BehaviorDelegate {
         return true;
     }
 
-    //! The physical START button buys the most expensive thing you can afford,
-    //! which is almost always what the player wants.
-    function onSelect() as Boolean {
-        if (mView.buyBest()) {
-            Haptics.confirm();
+    //! Quick-buy hangs off the raw key event, not off onSelect. A screen tap
+    //! also arrives as the *select behaviour* on this hardware, and it does so
+    //! without any coordinates - so an onSelect that called buyBest() turned
+    //! every tap anywhere into "buy the most expensive crew", ignoring both
+    //! the row under the finger and the quantity chip. onKey(KEY_ENTER) is
+    //! reached only by the physical button, so the two gestures stay apart.
+    //! Every other key falls through to its behaviour, which is what keeps the
+    //! page keys scrolling.
+    function onKey(event as WatchUi.KeyEvent) as Boolean {
+        if (event.getKey() == WatchUi.KEY_ENTER) {
+            if (mView.buyBest()) {
+                Haptics.confirm();
+            }
+            return true;
         }
-        return true;
+        return false;
     }
 
     function onBack() as Boolean {
