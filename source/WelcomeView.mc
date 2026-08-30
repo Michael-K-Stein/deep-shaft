@@ -53,9 +53,8 @@ class WelcomeView extends GameView {
         dc.drawText(mW / 2, (mH * 15) / 100, Graphics.FONT_XTINY,
             Names.get(Rez.Strings.WelcomeTitle).toUpper(), Graphics.TEXT_JUSTIFY_CENTER);
 
-        dc.setColor(Theme.GOLD, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(mW / 2, (mH * 26) / 100, Graphics.FONT_NUMBER_MEDIUM,
-            Fmt.big(mGain), Graphics.TEXT_JUSTIFY_CENTER);
+        Theme.bigValue(dc, mW / 2, (mH * 26) / 100, mGain, Theme.GOLD,
+            Graphics.FONT_NUMBER_MEDIUM);
 
         dc.setColor(Theme.TEXT, Graphics.COLOR_TRANSPARENT);
         dc.drawText(mW / 2, (mH * 45) / 100, Graphics.FONT_XTINY,

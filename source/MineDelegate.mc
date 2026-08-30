@@ -3,7 +3,7 @@ import Toybox.WatchUi;
 
 //! Input for the home screen.
 //!
-//!   tap / START  - swing the pick
+//!   tap / START  - swing the pick, or grab a lucky vein when one is up
 //!   tap the pill - open the crew screen
 //!   swipe up     - crew, swipe down - dig deeper, swipe left - detonate
 //!   MENU         - the hub menu
@@ -20,6 +20,12 @@ class MineDelegate extends WatchUi.BehaviorDelegate {
         var coords = event.getCoordinates();
         var x = coords[0];
         var y = coords[1];
+        if (mView.hitStrike(x, y)) {
+            mView.claimStrike();
+            Haptics.confirm();
+            WatchUi.requestUpdate();
+            return true;
+        }
         if (mView.hitCrewButton(x, y)) {
             openCrew();
             return true;
@@ -28,7 +34,15 @@ class MineDelegate extends WatchUi.BehaviorDelegate {
         return true;
     }
 
+    //! START takes the vein when one is up - it is worth far more than a
+    //! swing, and fumbling for it on a small screen would be a shame.
     function onSelect() as Boolean {
+        if (mView.strikeLive()) {
+            mView.claimStrike();
+            Haptics.confirm();
+            WatchUi.requestUpdate();
+            return true;
+        }
         doSwing(-1, -1);
         return true;
     }

@@ -17,7 +17,11 @@ module Names {
             case 5: id = Rez.Strings.Miner5; break;
             case 6: id = Rez.Strings.Miner6; break;
             case 7: id = Rez.Strings.Miner7; break;
-            default: id = Rez.Strings.Miner8; break;
+            case 8: id = Rez.Strings.Miner8; break;
+            case 9: id = Rez.Strings.Miner9; break;
+            case 10: id = Rez.Strings.Miner10; break;
+            case 11: id = Rez.Strings.Miner11; break;
+            default: id = Rez.Strings.Miner12; break;
         }
         return WatchUi.loadResource(id) as String;
     }
@@ -32,7 +36,11 @@ module Names {
             case 4: id = Rez.Strings.Layer4; break;
             case 5: id = Rez.Strings.Layer5; break;
             case 6: id = Rez.Strings.Layer6; break;
-            default: id = Rez.Strings.Layer7; break;
+            case 7: id = Rez.Strings.Layer7; break;
+            case 8: id = Rez.Strings.Layer8; break;
+            case 9: id = Rez.Strings.Layer9; break;
+            case 10: id = Rez.Strings.Layer10; break;
+            default: id = Rez.Strings.Layer11; break;
         }
         return WatchUi.loadResource(id) as String;
     }

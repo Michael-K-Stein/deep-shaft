@@ -71,9 +71,9 @@ class CrewView extends GameView {
 
         var count = state.revealedCount();
         for (var slot = 0; slot < mVisibleRows; slot += 1) {
-            var index = mTop + slot;
-            if (index < count) {
-                drawRow(dc, state, index, mRowTop + slot * mRowH);
+            var position = mTop + slot;
+            if (position < count) {
+                drawRow(dc, state, crewAt(state, position), mRowTop + slot * mRowH);
             }
         }
 
@@ -120,21 +120,68 @@ class CrewView extends GameView {
         Theme.panel(dc, x, y + 3, w, mRowH - 8, 10, fill,
             affordable ? Theme.GOLD_DIM : null);
 
+        // Lay the row out from the real font metrics rather than from fixed
+        // offsets: the two text lines, the price column and the milestone bar
+        // all have to share a panel only ~20% of the screen tall, and guessed
+        // offsets put the second line through the bottom edge.
+        var lineH = dc.getFontHeight(Graphics.FONT_XTINY);
+        var panelBottom = y + mRowH - 5;
+        var barY = panelBottom - 7;
+
+        var priceText = Fmt.big(price);
+        var priceW = dc.getTextWidthInPixels(priceText, Graphics.FONT_TINY);
         var textLeft = x + 14;
+        var textRight = x + w - 14 - priceW - 10;
+
+        var nameY = y + 7;
+        var rateY = nameY + lineH;
+
+        var name = Names.crew(index);
         dc.setColor(Theme.TEXT, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(textLeft, y + 12, Graphics.FONT_XTINY,
-            Names.crew(index), Graphics.TEXT_JUSTIFY_LEFT);
+        dc.drawText(textLeft, nameY, Graphics.FONT_XTINY,
+            name, Graphics.TEXT_JUSTIFY_LEFT);
+
+        // Banked milestone doublings ride after the name, in gold, but only
+        // when they fit clear of the price column.
+        var steps = state.crewMilestones(index);
+        if (steps > 0) {
+            var badge = Fmt.mult(state.crewMilestoneMult(index));
+            var badgeX = textLeft
+                + dc.getTextWidthInPixels(name, Graphics.FONT_XTINY) + 8;
+            if (badgeX + dc.getTextWidthInPixels(badge, Graphics.FONT_XTINY)
+                    <= textRight) {
+                dc.setColor(Theme.GOLD, Graphics.COLOR_TRANSPARENT);
+                dc.drawText(badgeX, nameY, Graphics.FONT_XTINY, badge,
+                    Graphics.TEXT_JUSTIFY_LEFT);
+            }
+        }
 
         dc.setColor(Theme.TEXT_DIM, Graphics.COLOR_TRANSPARENT);
-        var rate = (Balance.CREW_BASE_RATE as Array<Double>)[index] * state.multiplier();
-        dc.drawText(textLeft, y + mRowH - 36, Graphics.FONT_XTINY,
-            owned.toString() + " x " + Fmt.rate(rate) + Names.get(Rez.Strings.PerSec),
+        dc.drawText(textLeft, rateY, Graphics.FONT_XTINY,
+            owned.toString() + " x " + Fmt.rate(state.crewUnitRate(index))
+                + Names.get(Rez.Strings.PerSec),
             Graphics.TEXT_JUSTIFY_LEFT);
 
         var priceColor = affordable ? Theme.GOLD : Theme.TEXT_DIM;
         dc.setColor(priceColor, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(x + w - 14, y + mRowH / 2 - 4, Graphics.FONT_TINY,
-            Fmt.big(price), Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
+        dc.drawText(x + w - 14, y + (mRowH - 8) / 2, Graphics.FONT_TINY,
+            priceText, Graphics.TEXT_JUSTIFY_RIGHT | Graphics.TEXT_JUSTIFY_VCENTER);
+
+        drawMilestoneBar(dc, state, index, textLeft, barY, w - 28);
+    }
+
+    //! A hairline under each row tracking progress to the next doubling. It
+    //! is deliberately thin: it should read as a nudge toward "a few more of
+    //! these" without competing with the price for attention.
+    private function drawMilestoneBar(dc as Dc, state as GameState, index as Number,
+                                      x as Number, y as Number, w as Number) as Void {
+        var done = Balance.MILESTONE_EVERY - state.crewToNextMilestone(index);
+        dc.setColor(Theme.PANEL_HI, Graphics.COLOR_TRANSPARENT);
+        dc.fillRectangle(x, y, w, 3);
+        if (done > 0) {
+            dc.setColor(Theme.GOLD_DIM, Graphics.COLOR_TRANSPARENT);
+            dc.fillRectangle(x, y, w * done / Balance.MILESTONE_EVERY, 3);
+        }
     }
 
     private function drawScrollbar(dc as Dc, count as Number) as Void {
@@ -208,6 +255,17 @@ class CrewView extends GameView {
         return [mW / 2 - w / 2, mHeaderH - h - 6, w, h] as Array<Number>;
     }
 
+    //! Crew index drawn at display position `position`, counting from the top.
+    //!
+    //! The shop runs richest-first. By the late game the opening tiers are
+    //! rounding errors that the player never buys again, so putting them first
+    //! meant scrolling past dead rows every visit. This way the useful end of
+    //! the list is the end you land on, and a tier that has just unlocked -
+    //! always the most expensive one - appears at the top.
+    private function crewAt(state as GameState, position as Number) as Number {
+        return state.revealedCount() - 1 - position;
+    }
+
     //! Row under a touch point, or -1.
     function rowAt(x as Number, y as Number) as Number {
         if (y < mRowTop) {
@@ -221,8 +279,8 @@ class CrewView extends GameView {
         if (state == null) {
             return -1;
         }
-        var index = mTop + slot;
-        return (index < state.revealedCount()) ? index : -1;
+        var position = mTop + slot;
+        return (position < state.revealedCount()) ? crewAt(state, position) : -1;
     }
 
     function hitChip(x as Number, y as Number) as Boolean {

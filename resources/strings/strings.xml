@@ -54,6 +54,7 @@
     <string id="StatLifetime">Lifetime</string>
     <string id="StatTaps">Swings</string>
     <string id="StatDetonations">Detonations</string>
+    <string id="StatStrikes">Veins struck</string>
     <string id="StatGems">Gems</string>
     <string id="StatPlayed">Played</string>
 
@@ -71,7 +72,11 @@
     <string id="Layer4">Obsidian</string>
     <string id="Layer5">Magma</string>
     <string id="Layer6">Crystal</string>
-    <string id="Layer7">The Void</string>
+    <string id="Layer7">Neutronium</string>
+    <string id="Layer8">Antimatter</string>
+    <string id="Layer9">Singularity</string>
+    <string id="Layer10">Genesis</string>
+    <string id="Layer11">The Void</string>
 
     <!-- Crew members -->
     <string id="Miner0">Rusty Pick</string>
@@ -83,4 +88,8 @@
     <string id="Miner6">Laser Bore</string>
     <string id="Miner7">Quantum Auger</string>
     <string id="Miner8">Magma Tap</string>
+    <string id="Miner9">Plasma Lance</string>
+    <string id="Miner10">Gravity Well</string>
+    <string id="Miner11">Rift Engine</string>
+    <string id="Miner12">Star Forge</string>
 </strings>

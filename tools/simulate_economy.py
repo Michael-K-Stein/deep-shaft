@@ -17,19 +17,25 @@ import argparse
 import math
 
 # --- mirrored from source/Balance.mc ---------------------------------------
-CREW_COUNT = 9
+CREW_COUNT = 13
 COST_GROWTH = 1.13
 CREW_BASE_COST = [15.0, 130.0, 1500.0, 18000.0, 240000.0,
-                  3600000.0, 60000000.0, 1100000000.0, 25000000000.0]
+                  3600000.0, 60000000.0, 1100000000.0, 25000000000.0,
+                  600000000000.0, 17000000000000.0, 520000000000000.0,
+                  18000000000000000.0]
 CREW_BASE_RATE = [0.15, 1.2, 9.0, 70.0, 520.0,
-                  4200.0, 38000.0, 380000.0, 4200000.0]
+                  4200.0, 38000.0, 380000.0, 4200000.0,
+                  50000000.0, 650000000.0, 9100000000.0, 140000000000.0]
 REVEAL_FRACTION = 0.30
+
+MILESTONE_EVERY = 25
+MILESTONE_MULT = 2.0
 
 DEPTH_BASE_COST = 400.0
 DEPTH_COST_GROWTH = 1.9
 DEPTH_BONUS = 1.25
 METRES_PER_LEVEL = 12
-LAYER_COUNT = 8
+LAYER_COUNT = 12
 LEVELS_PER_LAYER = 6
 
 DETONATE_MIN_EARNED = 100000000.0
@@ -40,10 +46,17 @@ GEM_BONUS = 0.02
 TAP_BASE = 1.0
 TAP_RATE_SHARE = 0.10
 
+STRIKE_MIN_SECS = 75.0
+STRIKE_MAX_SECS = 210.0
+STRIKE_REWARD_SECS = 25.0
+STRIKE_MIN_SWINGS = 12.0
+
 CREW_NAMES = ["Rusty Pick", "Shovel Crew", "Ore Cart", "Drill Rig", "Blast Team",
-              "Excavator", "Laser Bore", "Quantum Auger", "Magma Tap"]
+              "Excavator", "Laser Bore", "Quantum Auger", "Magma Tap",
+              "Plasma Lance", "Gravity Well", "Rift Engine", "Star Forge"]
 LAYER_NAMES = ["Topsoil", "Clay", "Limestone", "Granite",
-               "Obsidian", "Magma", "Crystal", "The Void"]
+               "Obsidian", "Magma", "Crystal", "Neutronium",
+               "Antimatter", "Singularity", "Genesis", "The Void"]
 
 
 def crew_cost(index, owned):
@@ -54,8 +67,14 @@ def depth_cost(depth_level):
     return DEPTH_BASE_COST * (DEPTH_COST_GROWTH ** depth_level)
 
 
+def milestone_mult(owned):
+    """Every MILESTONE_EVERY units of a type doubles that type's output."""
+    return MILESTONE_MULT ** (owned // MILESTONE_EVERY)
+
+
 def base_rate(crew):
-    return sum(CREW_BASE_RATE[i] * crew[i] for i in range(CREW_COUNT))
+    return sum(CREW_BASE_RATE[i] * crew[i] * milestone_mult(crew[i])
+               for i in range(CREW_COUNT))
 
 
 def multiplier(depth_level, gems):
@@ -114,6 +133,12 @@ def simulate(hours, gems, taps_per_second, step=1.0):
         if taps_per_second > 0.0:
             swing = (TAP_BASE + base_rate(crew) * TAP_RATE_SHARE) * mult
             earned += swing * taps_per_second * step
+            # A player who is tapping is watching, so assume they take the
+            # veins too. Averaged over the mean interval rather than modelled
+            # as discrete events - the point here is the curve, not the noise.
+            reward = max(base_rate(crew) * mult * STRIKE_REWARD_SECS,
+                         swing * STRIKE_MIN_SWINGS)
+            earned += reward / ((STRIKE_MIN_SECS + STRIKE_MAX_SECS) / 2.0) * step
         gold += earned
         run_earned += earned
         lifetime += earned
@@ -133,7 +158,12 @@ def simulate(hours, gems, taps_per_second, step=1.0):
                 cost = crew_cost(i, crew[i])
                 if cost > gold:
                     continue
-                gain = CREW_BASE_RATE[i] * mult
+                # The unit itself, plus the doubling if it happens to be the
+                # one that trips a milestone - which is what makes stacking a
+                # single crew type worth doing.
+                before = CREW_BASE_RATE[i] * crew[i] * milestone_mult(crew[i])
+                after = CREW_BASE_RATE[i] * (crew[i] + 1) * milestone_mult(crew[i] + 1)
+                gain = (after - before) * mult
                 ratio = gain / cost
                 if ratio > best_ratio:
                     best_kind, best_index, best_ratio = "crew", i, ratio
@@ -203,6 +233,8 @@ def main():
           % (depth_level, depth_level * METRES_PER_LEVEL, LAYER_NAMES[layer]))
     print("  gems on offer   %d" % pending_gems(run_earned))
     print("  crew            %s" % " ".join("%d" % c for c in crew))
+    print("  milestones      %s"
+          % " ".join("%d" % (c // MILESTONE_EVERY) for c in crew))
 
 
 if __name__ == "__main__":

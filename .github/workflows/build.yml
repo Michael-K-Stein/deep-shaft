@@ -5,15 +5,11 @@ on:
     branches: ["**"]
   pull_request:
 
-defaults:
-  run:
-    working-directory: deep-shaft-pit
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - uses: actions/setup-java@v5
         with:
@@ -23,17 +19,17 @@ jobs:
       - name: Cache the Connect IQ SDK
         uses: actions/cache@v4
         with:
-          path: deep-shaft-pit/build/sdk
-          key: connectiq-sdk-${{ hashFiles('deep-shaft-pit/tools/build.sh') }}
+          path: build/sdk
+          key: connectiq-sdk-${{ hashFiles('tools/build.sh') }}
 
-      - name: Check the round-screen layout
-        run: python3 tools/check_layout.py
+      - name: Check the code against its own invariants
+        run: tools/verify.sh
 
       - name: Build for the Venu 2 family
         run: tools/build.sh --fetch-sdk
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         with:
-          name: deep-shaft-pit-prg
-          path: deep-shaft-pit/build/*.prg
+          name: deep-shaft-prg
+          path: build/*.prg
           if-no-files-found: error

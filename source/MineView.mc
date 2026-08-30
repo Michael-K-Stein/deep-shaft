@@ -26,6 +26,13 @@ class MineView extends GameView {
     private var mOreVX as Array<Float>;
     private var mOreVY as Array<Float>;
 
+    // A glinting vein of gold: the thing worth opening the app for.
+    private var mStrikeWait as Float = 0.0;
+    private var mStrikeLife as Float = 0.0;
+    private var mStrikeX as Number = 0;
+    private var mStrikeY as Number = 0;
+    private var mStrikePulse as Float = 0.0;
+
     private var mSwingPhase as Float = 0.0;
     private var mLastPhase as Float = 0.0;
     private var mDrift as Float = 0.0;
@@ -88,6 +95,9 @@ class MineView extends GameView {
 
     function onShow() as Void {
         GameView.onShow();
+        if (mStrikeWait <= 0.0 && mStrikeLife <= 0.0) {
+            scheduleStrike();
+        }
         // The welcome-back card is pushed from a one-shot timer: pushing a
         // view from inside onShow() is not safe.
         var state = DeepShaftApp.game();
@@ -134,6 +144,8 @@ class MineView extends GameView {
             spawnOre(3);
         }
 
+        advanceStrike(dt);
+
         for (var i = 0; i < MAX_POPS; i += 1) {
             if (mPopLife[i] > 0.0) {
                 mPopLife[i] = mPopLife[i] - dt;
@@ -152,16 +164,123 @@ class MineView extends GameView {
 
     //! Called by the delegate when the player swings.
     function registerSwing(value as Double, x as Number, y as Number) as Void {
+        pop("+" + Fmt.big(value), x, y, 0.9);
+        spawnOre(4);
+    }
+
+    //! Float a label up from (x, y) for `life` seconds.
+    private function pop(text as String, x as Number, y as Number, life as Float) as Void {
         for (var i = 0; i < MAX_POPS; i += 1) {
             if (mPopLife[i] <= 0.0) {
-                mPopLife[i] = 0.9;
+                mPopLife[i] = life;
                 mPopX[i] = x;
                 mPopY[i] = y.toFloat();
-                mPopText[i] = "+" + Fmt.big(value);
-                break;
+                mPopText[i] = text;
+                return;
             }
         }
-        spawnOre(4);
+    }
+
+    // --------------------------------------------------------- lucky strikes
+
+    //! Put the next vein somewhere between STRIKE_MIN_SECS and STRIKE_MAX_SECS
+    //! away, so the player cannot learn to arrive exactly on the beat.
+    private function scheduleStrike() as Void {
+        var span = Balance.STRIKE_MAX_SECS - Balance.STRIKE_MIN_SECS;
+        mStrikeWait = Balance.STRIKE_MIN_SECS + (Math.rand() % 1000) / 1000.0 * span;
+        mStrikeLife = 0.0;
+    }
+
+    private function advanceStrike(dt as Float) as Void {
+        if (mStrikeLife > 0.0) {
+            mStrikePulse += dt * 4.0;
+            mStrikeLife -= dt;
+            if (mStrikeLife <= 0.0) {
+                // Missed it. The next one is already on its way.
+                scheduleStrike();
+            }
+            return;
+        }
+        if (mStrikeWait > 0.0) {
+            mStrikeWait -= dt;
+            if (mStrikeWait <= 0.0) {
+                surfaceStrike();
+            }
+        }
+    }
+
+    //! Surface a vein in the rock, clear of the shaft and the crew button.
+    private function surfaceStrike() as Void {
+        var top = mGroundY + 30;
+        var bottom = mCrewButtonY - 34;
+        if (bottom <= top) {
+            scheduleStrike();
+            return;
+        }
+        mStrikeY = top + Math.rand() % (bottom - top);
+
+        // Keep it on the glass: the usable width shrinks fast this far down.
+        var half = Theme.chordHalfWidth(mW / 2 - 22, mStrikeY - mH / 2);
+        var margin = mShaftW / 2 + 24;
+        if (half <= margin) {
+            scheduleStrike();
+            return;
+        }
+        var offset = margin + Math.rand() % (half - margin);
+        mStrikeX = mW / 2 + ((Math.rand() % 2 == 0) ? -offset : offset);
+
+        mStrikeLife = Balance.STRIKE_VISIBLE_SECS;
+        mStrikePulse = 0.0;
+        Haptics.tap();
+    }
+
+    //! True while a vein is on screen and tappable.
+    function strikeLive() as Boolean {
+        return mStrikeLife > 0.0;
+    }
+
+    function hitStrike(x as Number, y as Number) as Boolean {
+        if (mStrikeLife <= 0.0) {
+            return false;
+        }
+        var dx = x - mStrikeX;
+        var dy = y - mStrikeY;
+        // A generous target: it is small, it moves nothing, and missing it
+        // costs the player a swing instead.
+        return dx * dx + dy * dy <= 34 * 34;
+    }
+
+    //! Bank the vein. Returns true when there was one to bank.
+    function claimStrike() as Boolean {
+        var state = DeepShaftApp.game();
+        if (mStrikeLife <= 0.0 || state == null) {
+            return false;
+        }
+        var value = state.claimStrike();
+        pop("+" + Fmt.big(value), mStrikeX, mStrikeY - 12, 1.4);
+        spawnOre(8);
+        scheduleStrike();
+        return true;
+    }
+
+    private function drawStrike(dc as Dc) as Void {
+        if (mStrikeLife <= 0.0) {
+            return;
+        }
+        var pulse = Math.sin(mStrikePulse).toFloat();
+        var r = 13 + (3.0 * pulse).toNumber();
+
+        // Fade the halo out over the last second as a hurry-up.
+        var fading = mStrikeLife < 1.0;
+        dc.setColor(fading ? Theme.GOLD_DIM : Theme.GOLD, Graphics.COLOR_TRANSPARENT);
+        dc.setPenWidth(2);
+        dc.drawCircle(mStrikeX, mStrikeY, r + 7);
+        dc.setPenWidth(1);
+
+        dc.setColor(Theme.GOLD, Graphics.COLOR_TRANSPARENT);
+        dc.fillCircle(mStrikeX, mStrikeY, r);
+        dc.setColor(0xFFF2C0, Graphics.COLOR_TRANSPARENT);
+        dc.fillCircle(mStrikeX - r / 3, mStrikeY - r / 3, r / 3);
     }
 
     private function spawnOre(count as Number) as Void {
@@ -219,6 +338,7 @@ class MineView extends GameView {
         drawShaft(dc, state);
         drawDigger(dc);
         drawOre(dc);
+        drawStrike(dc);
         drawHud(dc, state);
         drawPops(dc);
         drawCrewButton(dc, state);
@@ -329,9 +449,8 @@ class MineView extends GameView {
                 + state.depthMetres().toString() + Names.get(Rez.Strings.Metres),
             Graphics.TEXT_JUSTIFY_CENTER);
 
-        dc.setColor(Theme.GOLD, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(cx, (mH * 19) / 100, Graphics.FONT_NUMBER_MEDIUM,
-            Fmt.big(state.gold), Graphics.TEXT_JUSTIFY_CENTER);
+        Theme.bigValue(dc, cx, (mH * 19) / 100, state.gold, Theme.GOLD,
+            Graphics.FONT_NUMBER_MEDIUM);
 
         dc.setColor(Theme.TEXT_DIM, Graphics.COLOR_TRANSPARENT);
         dc.drawText(cx, (mH * 36) / 100, Graphics.FONT_TINY,

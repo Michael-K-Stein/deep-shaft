@@ -40,12 +40,14 @@ class StatsView extends GameView {
         dc.drawText(mW / 2, (mH * 6) / 100, Graphics.FONT_XTINY,
             Names.get(Rez.Strings.StatsTitle).toUpper(), Graphics.TEXT_JUSTIFY_CENTER);
 
-        var y = (mH * 17) / 100;
+        // Seven rows now, so they start a little higher up the glass.
+        var y = (mH * 15) / 100;
         y = row(dc, y, Names.get(Rez.Strings.StatRun), Fmt.big(state.runEarned), Theme.GOLD);
         y = row(dc, y, Names.get(Rez.Strings.StatLifetime), Fmt.big(state.lifetimeEarned), Theme.GOLD);
         y = row(dc, y, Names.get(Rez.Strings.StatGems), state.gems.toString(), Theme.GEM);
         y = row(dc, y, Names.get(Rez.Strings.StatDetonations), state.detonations.toString(), Theme.ACCENT);
         y = row(dc, y, Names.get(Rez.Strings.StatTaps), state.swings.toString(), Theme.TEXT);
+        y = row(dc, y, Names.get(Rez.Strings.StatStrikes), state.strikes.toString(), Theme.GOLD);
         y = row(dc, y, Names.get(Rez.Strings.StatPlayed), Fmt.duration(state.playedSecs), Theme.TEXT);
     }
 

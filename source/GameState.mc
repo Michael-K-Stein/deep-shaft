@@ -21,6 +21,7 @@ class GameState {
     public var lifetimeEarned as Double = 0.0d;
     public var swings as Number = 0;
     public var detonations as Number = 0;
+    public var strikes as Number = 0;
     public var playedSecs as Number = 0;
     public var haptics as Boolean = true;
     public var lastSeen as Number = 0;
@@ -50,10 +51,37 @@ class GameState {
         for (var i = 0; i < Balance.CREW_COUNT; i += 1) {
             var owned = crew[i] as Number;
             if (owned > 0) {
-                total += (Balance.CREW_BASE_RATE as Array<Double>)[i] * owned;
+                total += (Balance.CREW_BASE_RATE as Array<Double>)[i] * owned
+                    * crewMilestoneMult(i);
             }
         }
         return total;
+    }
+
+    //! How many milestone doublings a crew type has banked.
+    function crewMilestones(index as Number) as Number {
+        return (crew[index] as Number) / Balance.MILESTONE_EVERY;
+    }
+
+    //! The milestone bonus a crew type is currently enjoying, x1 at the start.
+    function crewMilestoneMult(index as Number) as Double {
+        var steps = crewMilestones(index);
+        if (steps <= 0) {
+            return 1.0d;
+        }
+        return Math.pow(Balance.MILESTONE_MULT, steps).toDouble();
+    }
+
+    //! Units still to buy before this crew type doubles again.
+    function crewToNextMilestone(index as Number) as Number {
+        return Balance.MILESTONE_EVERY
+            - ((crew[index] as Number) % Balance.MILESTONE_EVERY);
+    }
+
+    //! Output of a single unit of a crew type, milestones and all.
+    function crewUnitRate(index as Number) as Double {
+        return (Balance.CREW_BASE_RATE as Array<Double>)[index]
+            * crewMilestoneMult(index) * multiplier();
     }
 
     //! Depth bonus times gem bonus. Applies to idle income and to swings.
@@ -252,6 +280,26 @@ class GameState {
         return (Balance.GEM_BONUS * 100.0d * gems).toNumber();
     }
 
+    // --------------------------------------------------------- lucky strikes
+
+    //! What tapping a vein is worth right now: a minute of income, or a
+    //! handful of swings early on when a minute of income is nearly nothing.
+    function strikeReward() as Double {
+        var byRate = ratePerSecond() * Balance.STRIKE_REWARD_SECS;
+        var bySwing = swingValue() * Balance.STRIKE_MIN_SWINGS;
+        return (byRate > bySwing) ? byRate : bySwing;
+    }
+
+    //! Bank a struck vein. Returns what it paid.
+    function claimStrike() as Double {
+        var value = strikeReward();
+        gold += value;
+        runEarned += value;
+        lifetimeEarned += value;
+        strikes += 1;
+        return value;
+    }
+
     // ----------------------------------------------------------------- loop
 
     //! Credit one manual swing.
@@ -324,6 +372,7 @@ class GameState {
             "life" => lifetimeEarned,
             "swings" => swings,
             "boom" => detonations,
+            "strikes" => strikes,
             "played" => playedSecs,
             "haptics" => haptics,
             "seen" => lastSeen
@@ -359,6 +408,7 @@ class GameState {
         lifetimeEarned = readDouble(data, "life", 0.0d);
         swings = readNumber(data, "swings", 0);
         detonations = readNumber(data, "boom", 0);
+        strikes = readNumber(data, "strikes", 0);
         playedSecs = readNumber(data, "played", 0);
         lastSeen = readNumber(data, "seen", 0);
 
@@ -407,6 +457,7 @@ class GameState {
         lifetimeEarned = 0.0d;
         swings = 0;
         detonations = 0;
+        strikes = 0;
         playedSecs = 0;
         offlineGain = 0.0d;
         offlineSecs = 0;

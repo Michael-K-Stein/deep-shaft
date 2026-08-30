@@ -119,12 +119,46 @@ def check_welcome(size, problems):
     return lay
 
 
+#! The tallest FONT_XTINY is likely to be, as a fraction of screen height.
+#  Real metrics only exist on-device, so the row check uses a pessimistic
+#  bound: if the layout survives this, it survives the real font.
+XTINY_MAX = 0.075
+
+
+def check_crew_rows(size, problems):
+    """CrewView.drawRow stacks two text lines and a milestone bar in a panel.
+
+    The panel is only ~20% of the screen tall, so the three of them together
+    are the tight constraint - this is what put the second line through the
+    bottom edge of the card once the bar was added.
+    """
+    w = h = size
+    row_h = (h * 21) // 100
+    header_h = (h * 26) // 100
+    visible = (h - header_h - (h * 6) // 100) // row_h
+
+    line_h = int(h * XTINY_MAX)
+    panel_bottom = row_h - 5
+    bar_y = panel_bottom - 7
+    text_bottom = 7 + 2 * line_h
+
+    if text_bottom > bar_y:
+        problems.append(
+            "crew row: two %dpx lines end at %d, past the milestone bar at %d"
+            % (line_h, text_bottom, bar_y))
+    if bar_y + 3 > panel_bottom:
+        problems.append("crew row: the milestone bar clips the panel edge")
+    if visible < 2:
+        problems.append("crew rows: only %d fit on screen" % visible)
+    return {"w": w, "h": h, "rows": visible, "rowH": row_h}
+
+
 def check_stats(size, problems):
-    """StatsView rows start at 17% and step 12%, inset by the chord width."""
+    """StatsView rows start at 15% and step 12%, inset by the chord width."""
     w = h = size
     lay = {"w": w, "h": h}
-    y = (h * 17) // 100
-    for i in range(6):
+    y = (h * 15) // 100
+    for i in range(7):
         half = chord_half_width(w // 2 - 10, y + 12 - h // 2)
         if half < 40:
             problems.append("stats row %d (y=%d) has only %dpx of half-width"
@@ -141,12 +175,14 @@ def main():
         problems = []
         mine = check_mine(size, problems)
         check_welcome(size, problems)
+        crew = check_crew_rows(size, problems)
         check_stats(size, problems)
 
         print("%s (%dx%d)" % (name, size, size))
         print("   ground at %d, digger at %d, crew button at %d (%dx%d)"
               % (mine["groundY"], mine["diggerY"], mine["crewButtonY"],
                  mine["crewButtonW"], mine["crewButtonH"]))
+        print("   %d crew rows of %dpx" % (crew["rows"], crew["rowH"]))
         if problems:
             failed = True
             for problem in problems:

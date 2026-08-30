@@ -73,9 +73,8 @@ class DigView extends GameView {
             Names.get(Rez.Strings.DigCost).toUpper(), Graphics.TEXT_JUSTIFY_CENTER);
 
         var affordable = state.canDig();
-        dc.setColor(affordable ? Theme.GOLD : Theme.TEXT_DIM, Graphics.COLOR_TRANSPARENT);
-        dc.drawText(mW / 2, (mH * 47) / 100, Graphics.FONT_NUMBER_MILD,
-            Fmt.big(state.depthCost()), Graphics.TEXT_JUSTIFY_CENTER);
+        Theme.bigValue(dc, mW / 2, (mH * 47) / 100, state.depthCost(),
+            affordable ? Theme.GOLD : Theme.TEXT_DIM, Graphics.FONT_NUMBER_MILD);
 
         Theme.ring(dc, mW / 2, mH / 2, mW / 2 - 6, 8, state.depthProgress(), Theme.GOLD);
 

@@ -12,15 +12,20 @@ module Fmt {
         "Ud", "Dd", "Td", "Qd"
     ];
 
-    //! Format a currency-style amount, e.g. 1234567.0 -> "1.23M".
-    function big(value as Double) as String {
+    //! Split a value into its digits and its magnitude suffix, e.g.
+    //! 1234567.0 -> ["1.23", "M"]. Amounts below 1000 come back with an empty
+    //! suffix.
+    //!
+    //! The two halves are kept separate because Garmin's FONT_NUMBER_* faces
+    //! are digit-only - see Theme.bigValue().
+    function parts(value as Double) as Array<String> {
         var v = value;
         if (v < 0.0d) {
             v = 0.0d;
         }
         if (v < 1000.0d) {
             // Small amounts read better as whole numbers.
-            return v.toNumber().toString();
+            return [v.toNumber().toString(), ""] as Array<String>;
         }
 
         var tier = 0;
@@ -38,7 +43,13 @@ module Fmt {
         } else {
             text = v.format("%.0f");
         }
-        return text + SUFFIX[tier];
+        return [text, (SUFFIX as Array<String>)[tier]] as Array<String>;
+    }
+
+    //! Format a currency-style amount, e.g. 1234567.0 -> "1.23M".
+    function big(value as Double) as String {
+        var p = parts(value);
+        return p[0] + p[1];
     }
 
     //! Same as big(), but keeps one decimal for sub-1000 rates so that a slow

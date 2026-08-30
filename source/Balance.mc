@@ -5,7 +5,7 @@ import Toybox.Lang;
 module Balance {
 
     //! Number of hireable crew types.
-    const CREW_COUNT = 9;
+    const CREW_COUNT = 13;
 
     //! Every purchase of a crew member makes the next one 13% dearer. This is
     //! the classic idle-game escalation: cheap early, brutal late.
@@ -21,7 +21,11 @@ module Balance {
         3600000.0d,
         60000000.0d,
         1100000000.0d,
-        25000000000.0d
+        25000000000.0d,
+        600000000000.0d,
+        17000000000000.0d,
+        520000000000000.0d,
+        18000000000000000.0d
     ];
 
     //! Gold per second contributed by a single unit of each crew type.
@@ -34,7 +38,11 @@ module Balance {
         4200.0d,
         38000.0d,
         380000.0d,
-        4200000.0d
+        4200000.0d,
+        50000000.0d,
+        650000000.0d,
+        9100000000.0d,
+        140000000000.0d
     ];
 
     //! A crew type stays hidden until the player has earned a fraction of its
@@ -50,8 +58,32 @@ module Balance {
     const METRES_PER_LEVEL = 12;
 
     //! Ore layers, one per six depth levels, purely for flavour and colour.
-    const LAYER_COUNT = 8;
+    const LAYER_COUNT = 12;
     const LEVELS_PER_LAYER = 6;
+
+    //! --- Milestones ------------------------------------------------------
+    //! Every 25 units of a crew type doubles that type's output. This is the
+    //! oldest trick in the genre and it earns its keep: it turns a flat "buy
+    //! the best thing" shop into a ladder of near-term goals, so there is
+    //! always a next reward in sight a few purchases away rather than one
+    //! distant unlock. Because the cost of a unit grows 13% a step, a doubling
+    //! every 25 steps roughly keeps pace instead of running away.
+    const MILESTONE_EVERY = 25;
+    const MILESTONE_MULT = 2.0d;
+
+    //! --- Lucky strikes ----------------------------------------------------
+    //! A glinting vein surfaces in the rock every couple of minutes and sits
+    //! there for a few seconds. Tapping it pays out a burst of income.
+    //!
+    //! This is the reason to open the app rather than let it idle: idle games
+    //! that only ever pay out on a timer give the player nothing to do when
+    //! they arrive. The floor in swings keeps the very first strikes worth
+    //! chasing, back when income per second is still a rounding error.
+    const STRIKE_MIN_SECS = 75.0;
+    const STRIKE_MAX_SECS = 210.0;
+    const STRIKE_VISIBLE_SECS = 7.0;
+    const STRIKE_REWARD_SECS = 25.0d;
+    const STRIKE_MIN_SWINGS = 12.0d;
 
     //! --- Prestige --------------------------------------------------------
     //! "Detonate the mine": wipe the run, keep gems, each gem is +2% forever.

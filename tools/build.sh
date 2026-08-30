@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Build Deep Shaft (pit) for the Venu 2 family.
+# Build Deep Shaft for the Venu 2 family.
 #
 #   tools/build.sh                    # build every device, strict type checking
 #   tools/build.sh venu2              # just one
