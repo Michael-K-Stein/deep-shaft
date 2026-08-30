@@ -10,7 +10,7 @@ gen/
 *.der
 *.pem
 
-# Editor / IDE
+# Editor / IDE / OS
 .settings/
 .project
 .vscode/

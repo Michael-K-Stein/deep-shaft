@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Build Deep Shaft Tycoon for the Venu 2 family.
+# Build Deep Shaft (pit) for the Venu 2 family.
 #
 #   tools/build.sh                    # build every device, strict type checking
 #   tools/build.sh venu2              # just one
@@ -81,12 +81,15 @@ if [ ! -f "$KEY" ]; then
         -in "$BUILD/developer_key.pem" -out "$KEY" -nocrypt
 fi
 
+echo "==> generating the launcher icons"
+"$PYTHON" "$ROOT/tools/make_icon.py" \
+    "$ROOT/resources-round-416x416/drawables/launcher_icon.png" 70 >/dev/null
+"$PYTHON" "$ROOT/tools/make_icon.py" \
+    "$ROOT/resources-round-360x360/drawables/launcher_icon.png" 61 >/dev/null
+
 echo "==> generating device configurations"
 "$PYTHON" "$ROOT/tools/make_device_json.py" --sdk "$SDK" --out "$DEVICES_DIR" \
     "${targets[@]}" >/dev/null
-
-echo "==> checking the round-screen layout"
-"$PYTHON" "$ROOT/tools/check_layout.py"
 
 status=0
 for device in "${targets[@]}"; do

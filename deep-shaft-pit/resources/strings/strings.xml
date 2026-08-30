@@ -1,0 +1,86 @@
+<strings>
+    <string id="AppName">Deep Shaft</string>
+
+    <!-- Main menu -->
+    <string id="MenuTitle">Deep Shaft</string>
+    <string id="MenuCrew">Crew</string>
+    <string id="MenuCrewSub">Hire and upgrade diggers</string>
+    <string id="MenuDig">Dig Deeper</string>
+    <string id="MenuDigSub">Boost every digger</string>
+    <string id="MenuDetonate">Detonate</string>
+    <string id="MenuDetonateSub">Reset for gems</string>
+    <string id="MenuStats">Stats</string>
+    <string id="MenuStatsSub">Run and lifetime totals</string>
+    <string id="MenuOptions">Options</string>
+    <string id="MenuOptionsSub">Haptics and wipe save</string>
+
+    <!-- Options menu -->
+    <string id="OptTitle">Options</string>
+    <string id="OptHaptics">Haptics</string>
+    <string id="OptWipe">Wipe Save</string>
+    <string id="OptWipeSub">Erase everything</string>
+
+    <!-- Crew screen -->
+    <string id="CrewTitle">Crew</string>
+    <string id="BuyX1">BUY x1</string>
+    <string id="BuyX10">BUY x10</string>
+    <string id="BuyMax">BUY MAX</string>
+    <string id="Locked">Locked</string>
+    <string id="Owned">owned</string>
+
+    <!-- Dig screen -->
+    <string id="DigTitle">Dig Deeper</string>
+    <string id="DigCost">Cost</string>
+    <string id="DigBonus">Depth bonus</string>
+    <string id="DigAction">DIG</string>
+
+    <!-- Detonate screen -->
+    <string id="DetonateTitle">Detonate Mine</string>
+    <string id="DetonateBody">Blow the shaft, lose your gold and crew, keep the gems.</string>
+    <string id="DetonateGain">You will earn</string>
+    <string id="DetonateNeed">Earn $1$ this run to detonate</string>
+    <string id="DetonateAction">DETONATE</string>
+    <string id="GemBonus">Each gem: +2% income</string>
+
+    <!-- Welcome back -->
+    <string id="WelcomeTitle">While you were away</string>
+    <string id="WelcomeSub">$1$ of idle mining</string>
+    <string id="WelcomeRate">crew works at 50% while away</string>
+    <string id="Collect">COLLECT</string>
+
+    <!-- Stats -->
+    <string id="StatsTitle">Stats</string>
+    <string id="StatRun">This run</string>
+    <string id="StatLifetime">Lifetime</string>
+    <string id="StatTaps">Swings</string>
+    <string id="StatDetonations">Detonations</string>
+    <string id="StatGems">Gems</string>
+    <string id="StatPlayed">Played</string>
+
+    <!-- Main view -->
+    <string id="PerSec">/s</string>
+    <string id="TapHint">TAP TO SWING</string>
+    <string id="Depth">DEPTH</string>
+    <string id="Metres">m</string>
+
+    <!-- Ore layers -->
+    <string id="Layer0">Topsoil</string>
+    <string id="Layer1">Clay</string>
+    <string id="Layer2">Limestone</string>
+    <string id="Layer3">Granite</string>
+    <string id="Layer4">Obsidian</string>
+    <string id="Layer5">Magma</string>
+    <string id="Layer6">Crystal</string>
+    <string id="Layer7">The Void</string>
+
+    <!-- Crew members -->
+    <string id="Miner0">Rusty Pick</string>
+    <string id="Miner1">Shovel Crew</string>
+    <string id="Miner2">Ore Cart</string>
+    <string id="Miner3">Drill Rig</string>
+    <string id="Miner4">Blast Team</string>
+    <string id="Miner5">Excavator</string>
+    <string id="Miner6">Laser Bore</string>
+    <string id="Miner7">Quantum Auger</string>
+    <string id="Miner8">Magma Tap</string>
+</strings>
