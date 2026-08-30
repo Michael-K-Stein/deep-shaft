@@ -5,6 +5,10 @@ on:
     branches: ["**"]
   pull_request:
 
+defaults:
+  run:
+    working-directory: deep-shaft-tycoon
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -20,8 +24,8 @@ jobs:
         id: sdk-cache
         uses: actions/cache@v4
         with:
-          path: build/sdk
-          key: connectiq-sdk-${{ hashFiles('tools/build.sh') }}
+          path: deep-shaft-tycoon/build/sdk
+          key: connectiq-sdk-${{ hashFiles('deep-shaft-tycoon/tools/build.sh') }}
 
       - name: Check the round-screen layout
         run: python3 tools/check_layout.py
@@ -32,5 +36,5 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: deep-shaft-prg
-          path: build/*.prg
+          path: deep-shaft-tycoon/build/*.prg
           if-no-files-found: error
