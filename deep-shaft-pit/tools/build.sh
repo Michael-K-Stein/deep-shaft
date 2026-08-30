@@ -87,6 +87,9 @@ echo "==> generating the launcher icons"
 "$PYTHON" "$ROOT/tools/make_icon.py" \
     "$ROOT/resources-round-360x360/drawables/launcher_icon.png" 61 >/dev/null
 
+echo "==> checking the round-screen layout"
+"$PYTHON" "$ROOT/tools/check_layout.py"
+
 echo "==> generating device configurations"
 "$PYTHON" "$ROOT/tools/make_device_json.py" --sdk "$SDK" --out "$DEVICES_DIR" \
     "${targets[@]}" >/dev/null

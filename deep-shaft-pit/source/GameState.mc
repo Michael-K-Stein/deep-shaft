@@ -328,12 +328,22 @@ class GameState {
             "haptics" => haptics,
             "seen" => lastSeen
         };
-        Application.Storage.setValue(SAVE_KEY, data);
+        try {
+            Application.Storage.setValue(SAVE_KEY, data);
+        } catch (ex) {
+            // A full storage partition must never take the game down.
+            System.println("save failed");
+        }
     }
 
     function load() as Void {
         mLastTickMs = System.getTimer();
-        var raw = Application.Storage.getValue(SAVE_KEY);
+        var raw = null;
+        try {
+            raw = Application.Storage.getValue(SAVE_KEY);
+        } catch (ex) {
+            raw = null;
+        }
         if (!(raw instanceof Lang.Dictionary)) {
             return;
         }

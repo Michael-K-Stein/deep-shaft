@@ -5,22 +5,17 @@ on:
     branches: ["**"]
   pull_request:
 
+defaults:
+  run:
+    working-directory: deep-shaft-pit
+
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        game: [deep-shaft-tycoon, deep-shaft-pit]
-
-    defaults:
-      run:
-        working-directory: ${{ matrix.game }}
-
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "21"
@@ -28,14 +23,17 @@ jobs:
       - name: Cache the Connect IQ SDK
         uses: actions/cache@v4
         with:
-          path: ${{ matrix.game }}/build/sdk
-          key: connectiq-sdk-${{ hashFiles(format('{0}/tools/build.sh', matrix.game)) }}
+          path: deep-shaft-pit/build/sdk
+          key: connectiq-sdk-${{ hashFiles('deep-shaft-pit/tools/build.sh') }}
+
+      - name: Check the round-screen layout
+        run: python3 tools/check_layout.py
 
       - name: Build for the Venu 2 family
         run: tools/build.sh --fetch-sdk
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.game }}-prg
-          path: ${{ matrix.game }}/build/*.prg
+          name: deep-shaft-pit-prg
+          path: deep-shaft-pit/build/*.prg
           if-no-files-found: error
