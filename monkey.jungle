@@ -1,0 +1,10 @@
+project.manifest = manifest.xml
+
+# Shared code and strings for every supported product.
+#
+# The launcher icon has to match the device's icon size exactly, and the Venu 2
+# family ships two: 70px on the 416x416 watches, 61px on the 360x360 Venu 2S.
+# Those live in resources-round-416x416 / resources-round-360x360, which the
+# build picks up automatically from the device family name.
+base.sourcePath = source
+base.resourcePath = resources

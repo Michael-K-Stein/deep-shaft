@@ -1,0 +1,18 @@
+# Build output, the downloaded SDK, and generated device configs.
+build/
+bin/
+gen/
+*.prg
+*.prg.debug.xml
+*.iq
+
+# Developer signing keys are personal - never commit one.
+*.der
+*.pem
+
+# Editor / IDE
+.settings/
+.project
+.vscode/
+.idea/
+.DS_Store

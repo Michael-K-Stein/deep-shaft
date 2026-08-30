@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<strings>
+    <string id="AppName">Deep Shaft</string>
+
+    <string id="MenuTitle">Mine Office</string>
+    <string id="MenuBuyMode">Buy amount</string>
+    <string id="MenuManagers">Hire all managers</string>
+    <string id="MenuSell">Sell the mine</string>
+    <string id="MenuStats">Statistics</string>
+    <string id="MenuHelp">How to play</string>
+    <string id="MenuWipe">Erase save</string>
+</strings>
