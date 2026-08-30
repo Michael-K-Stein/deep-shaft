@@ -5,7 +5,7 @@ import Toybox.Lang;
 module Balance {
 
     //! Number of hireable crew types.
-    const CREW_COUNT = 13;
+    const CREW_COUNT = 15;
 
     //! Every purchase of a crew member makes the next one 13% dearer. This is
     //! the classic idle-game escalation: cheap early, brutal late.
@@ -25,7 +25,9 @@ module Balance {
         600000000000.0d,
         17000000000000.0d,
         520000000000000.0d,
-        18000000000000000.0d
+        18000000000000000.0d,
+        700000000000000000.0d,
+        28000000000000000000.0d
     ];
 
     //! Gold per second contributed by a single unit of each crew type.
@@ -42,7 +44,9 @@ module Balance {
         50000000.0d,
         650000000.0d,
         9100000000.0d,
-        140000000000.0d
+        140000000000.0d,
+        2300000000000.0d,
+        40000000000000.0d
     ];
 
     //! A crew type stays hidden until the player has earned a fraction of its
