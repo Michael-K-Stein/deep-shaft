@@ -112,6 +112,46 @@ Connect IQ simulator with `monkeydo build/venu2.prg venu2`.
 Minimum API level is 3.2.0, which every Venu 2 firmware satisfies. The app
 requests no permissions.
 
+## Releasing
+
+The store takes a single signed `.iq` holding every product, not the per-device
+`.prg` files that a sideload uses:
+
+```sh
+tools/package.sh                # -> build/DeepShaft.iq
+```
+
+Run `tools/verify.sh` and a plain `tools/build.sh` first. `package.sh` compiles
+with `--release`, which turns the type checker off, so the strict build is not
+optional — it is the half of the test suite that needs the SDK.
+
+Tagging cuts a release. `.github/workflows/release.yml` runs on any `v*` tag,
+repeats both halves of the gate, packages, and attaches the `.iq` and all three
+`.prg` files to a GitHub release:
+
+```sh
+git tag v1.0.0 && git push origin v1.0.0
+```
+
+That workflow needs the signing key as a repository secret named
+`CIQ_DEVELOPER_KEY`, base64 of the DER:
+
+```sh
+base64 -w0 build/developer_key.der | gh secret set CIQ_DEVELOPER_KEY
+```
+
+**Keep that key somewhere permanent.** `tools/build.sh` generates one into
+`build/` when none exists, which is fine for sideloading and wrong for
+publishing: the store binds the app to whichever key first uploaded it and will
+refuse an update signed with another, so losing it means abandoning the listing
+and starting a new one. `tools/package.sh` therefore never generates a key — it
+fails instead. The app id in `manifest.xml` is the other half of that identity
+and must never change once published.
+
+Nothing in CI talks to Garmin. Uploading the `.iq` at
+[apps.garmin.com](https://apps.garmin.com), with screenshots and a store icon,
+stays a manual step in front of a human reviewer.
+
 ## Balance
 
 The pacing is checked by `tools/simulate_economy.py`, which plays a greedy run
