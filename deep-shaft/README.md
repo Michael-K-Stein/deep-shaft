@@ -72,13 +72,36 @@ round display at that height, so the same code fits the 416x416 Venu 2 and Venu
 Requires the Connect IQ SDK and a developer key.
 
 ```sh
-monkeyc -f monkey.jungle -o bin/DeepShaft.prg -d venu2 -y /path/to/developer_key.der -w -l 3
+CIQ_HOME=/path/to/connectiq-sdk \
+DEVELOPER_KEY=/path/to/developer_key.der \
+  deep-shaft/tools/build.sh              # all products
+  deep-shaft/tools/build.sh venu2        # just one
+```
+
+The script resolves paths from its own location, so it can be run from anywhere
+and always writes to `deep-shaft/bin/` — the repository root stays clean.
+`CIQ_HOME` may be omitted if `monkeyc` is on `PATH`; `DEVELOPER_KEY` defaults to
+`~/.Garmin/developer_key.der`.
+
+The equivalent single invocation:
+
+```sh
+monkeyc -f deep-shaft/monkey.jungle -o deep-shaft/bin/DeepShaft.prg \
+        -d venu2 -y /path/to/developer_key.der -w -l 3
 ```
 
 `-l 3` is the strict type checker; the project builds clean at that level for
 `venu2`, `venu2s` and `venu2plus`. To sideload, copy the `.prg` to
 `GARMIN/APPS/` on the watch, or run it in the Connect IQ simulator with
-`monkeydo bin/DeepShaft.prg venu2`.
+`monkeydo deep-shaft/bin/DeepShaft-venu2.prg venu2`.
+
+If you need a signing key:
+
+```sh
+openssl genrsa -out key.pem 4096
+openssl pkcs8 -topk8 -inform PEM -outform DER -in key.pem \
+        -out developer_key.der -nocrypt
+```
 
 Minimum API level is 3.2.0, which every Venu 2 firmware satisfies. The app
 requests no permissions.
