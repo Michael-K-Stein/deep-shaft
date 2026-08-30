@@ -9,6 +9,10 @@ class CrewView extends GameView {
     //! Buy quantities the chip cycles through. 0 means "as many as possible".
     private const QUANTITIES = [1, 10, 0];
 
+    //! Narrower than this and a row has no room for its name, price and bar,
+    //! so it is skipped rather than drawn as an unreadable sliver.
+    private const MIN_ROW_HALF = 40;
+
     private var mTop as Number = 0;          // index of the first visible row
     private var mQuantityIndex as Number = 0;
     private var mFlashRow as Number = -1;    // row that just got bought
@@ -104,13 +108,8 @@ class CrewView extends GameView {
                                    : state.crewCost(index, owned);
         var affordable = quantity > 0 && price <= state.gold;
 
-        // Fit the row to the narrowest of its own top and bottom edges,
-        // otherwise the corners of a row near the bezel fall off the glass.
-        var radius = mW / 2 - 4;
-        var top = Theme.chordHalfWidth(radius, y + 3 - mH / 2);
-        var bottom = Theme.chordHalfWidth(radius, y + mRowH - 5 - mH / 2);
-        var half = (top < bottom) ? top : bottom;
-        if (half < 40) {
+        var half = rowHalfWidth(y);
+        if (half < MIN_ROW_HALF) {
             return;
         }
         var x = mW / 2 - half;
@@ -266,13 +265,34 @@ class CrewView extends GameView {
         return state.revealedCount() - 1 - position;
     }
 
-    //! Row under a touch point, or -1.
+    //! Half-width of the row panel drawn at `y`, fitted to the narrowest of
+    //! its own top and bottom edges - otherwise the corners of a row near the
+    //! bezel fall off the glass. Below MIN_ROW_HALF the row is not drawn at
+    //! all, so hit testing has to apply the same cutoff.
+    private function rowHalfWidth(y as Number) as Number {
+        var radius = mW / 2 - 4;
+        var top = Theme.chordHalfWidth(radius, y + 3 - mH / 2);
+        var bottom = Theme.chordHalfWidth(radius, y + mRowH - 5 - mH / 2);
+        return (top < bottom) ? top : bottom;
+    }
+
+    //! Row under a touch point, or -1. The test has to reproduce the panel the
+    //! player can actually see: the round screen leaves a wide margin either
+    //! side of the top and bottom rows, and a tap out there belongs to no row.
     function rowAt(x as Number, y as Number) as Number {
-        if (y < mRowTop) {
+        if (mRowH <= 0 || y < mRowTop) {
             return -1;
         }
         var slot = (y - mRowTop) / mRowH;
         if (slot < 0 || slot >= mVisibleRows) {
+            return -1;
+        }
+        var rowY = mRowTop + slot * mRowH;
+        if (y < rowY + 3 || y >= rowY + mRowH - 5) {
+            return -1;
+        }
+        var half = rowHalfWidth(rowY);
+        if (half < MIN_ROW_HALF || x < mW / 2 - half || x > mW / 2 + half) {
             return -1;
         }
         var state = DeepShaftApp.game();

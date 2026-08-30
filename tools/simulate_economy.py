@@ -22,14 +22,14 @@ COST_GROWTH = 1.13
 CREW_BASE_COST = [15.0, 130.0, 1500.0, 18000.0, 240000.0,
                   3600000.0, 60000000.0, 1100000000.0, 25000000000.0,
                   600000000000.0, 17000000000000.0, 520000000000000.0,
-                  18000000000000000.0, 650000000000000000.0,
-                  24000000000000000000.0, 900000000000000000000.0,
-                  34000000000000000000000.0]
+                  18000000000000000.0, 700000000000000000.0,
+                  28000000000000000000.0, 1000000000000000000000.0,
+                  36000000000000000000000.0]
 CREW_BASE_RATE = [0.15, 1.2, 9.0, 70.0, 520.0,
                   4200.0, 38000.0, 380000.0, 4200000.0,
                   50000000.0, 650000000.0, 9100000000.0, 140000000000.0,
-                  2000000000000.0, 30000000000000.0, 450000000000000.0,
-                  7000000000000000.0]
+                  2300000000000.0, 40000000000000.0, 600000000000000.0,
+                  9000000000000000.0]
 REVEAL_FRACTION = 0.30
 
 MILESTONE_EVERY = 25
@@ -58,7 +58,8 @@ STRIKE_MIN_SWINGS = 12.0
 CREW_NAMES = ["Rusty Pick", "Shovel Crew", "Ore Cart", "Drill Rig", "Blast Team",
               "Excavator", "Laser Bore", "Quantum Auger", "Magma Tap",
               "Plasma Lance", "Gravity Well", "Rift Engine", "Star Forge",
-              "Nova Crucible", "Pulsar Drill", "Galactic Maw", "Aeon Engine"]
+              "Quasar Drive", "Singularity Core", "Galactic Maw",
+              "Aeon Engine"]
 LAYER_NAMES = ["Topsoil", "Clay", "Limestone", "Granite",
                "Obsidian", "Magma", "Crystal", "Neutronium",
                "Antimatter", "Singularity", "Genesis", "The Void"]
