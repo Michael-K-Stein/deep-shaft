@@ -64,7 +64,7 @@ jobs:
 
       - uses: actions/upload-artifact@v5
         with:
-          name: deep-shaft-iq
+          name: idle-garmin-iq
           path: build/DeepShaft.iq
           if-no-files-found: error
 
@@ -76,4 +76,4 @@ jobs:
           gh release create "${GITHUB_REF_NAME}" \
             --title "Deep Shaft ${GITHUB_REF_NAME}" \
             --generate-notes \
-            build/DeepShaft.iq build/venu2.prg build/venu2s.prg build/venu2plus.prg
+            build/DeepShaft.iq build/DeepShaft-venu2.prg build/DeepShaft-venu2s.prg build/DeepShaft-venu2plus.prg

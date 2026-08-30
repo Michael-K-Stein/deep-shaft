@@ -19,6 +19,9 @@
     <string id="OptHaptics">Haptics</string>
     <string id="OptWipe">Wipe Save</string>
     <string id="OptWipeSub">Erase everything</string>
+    <string id="OptTip">Tip Jar</string>
+    <string id="OptTipSub">Support the miner</string>
+    <string id="OptTipNoPhone">Connect your phone to leave a tip</string>
 
     <!-- Crew screen -->
     <string id="CrewTitle">Crew</string>
