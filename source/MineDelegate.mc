@@ -36,7 +36,17 @@ class MineDelegate extends WatchUi.BehaviorDelegate {
 
     //! START takes the vein when one is up - it is worth far more than a
     //! swing, and fumbling for it on a small screen would be a shame.
-    function onSelect() as Boolean {
+    //!
+    //! This hangs off the raw key event, not onSelect: on this hardware a
+    //! screen tap also arrives as the select behaviour, with no coordinates,
+    //! so an onSelect override fired a second, center-screen swing right
+    //! after onTap had already handled the real one - which is why every tap
+    //! looked like it landed dead center. onKey(KEY_ENTER) is reached only by
+    //! the physical START button, so the two gestures stay apart.
+    function onKey(event as WatchUi.KeyEvent) as Boolean {
+        if (event.getKey() != WatchUi.KEY_ENTER) {
+            return false;
+        }
         if (mView.strikeLive()) {
             mView.claimStrike();
             Haptics.confirm();
