@@ -23,7 +23,12 @@ module Names {
             case 11: id = Rez.Strings.Miner11; break;
             case 12: id = Rez.Strings.Miner12; break;
             case 13: id = Rez.Strings.Miner13; break;
-            default: id = Rez.Strings.Miner14; break;
+            case 14: id = Rez.Strings.Miner14; break;
+            case 15: id = Rez.Strings.Miner15; break;
+            case 16: id = Rez.Strings.Miner16; break;
+            case 17: id = Rez.Strings.Miner17; break;
+            case 18: id = Rez.Strings.Miner18; break;
+            default: id = Rez.Strings.Miner19; break;
         }
         return WatchUi.loadResource(id) as String;
     }

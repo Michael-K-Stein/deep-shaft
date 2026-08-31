@@ -17,17 +17,22 @@ import argparse
 import math
 
 # --- mirrored from source/Balance.mc ---------------------------------------
-CREW_COUNT = 15
+CREW_COUNT = 20
 COST_GROWTH = 1.13
 CREW_BASE_COST = [15.0, 130.0, 1500.0, 18000.0, 240000.0,
                   3600000.0, 60000000.0, 1100000000.0, 25000000000.0,
                   600000000000.0, 17000000000000.0, 520000000000000.0,
                   18000000000000000.0, 700000000000000000.0,
-                  28000000000000000000.0]
+                  28000000000000000000.0, 1200000000000000000000.0,
+                  58000000000000000000000.0, 3000000000000000000000000.0,
+                  170000000000000000000000000.0,
+                  10000000000000000000000000000.0]
 CREW_BASE_RATE = [0.15, 1.2, 9.0, 70.0, 520.0,
                   4200.0, 38000.0, 380000.0, 4200000.0,
                   50000000.0, 650000000.0, 9100000000.0, 140000000000.0,
-                  2300000000000.0, 40000000000000.0]
+                  2300000000000.0, 40000000000000.0, 740000000000000.0,
+                  15000000000000000.0, 310000000000000000.0,
+                  6700000000000000000.0, 150000000000000000000.0]
 REVEAL_FRACTION = 0.30
 
 MILESTONE_EVERY = 25
@@ -56,7 +61,9 @@ STRIKE_MIN_SWINGS = 12.0
 CREW_NAMES = ["Rusty Pick", "Shovel Crew", "Ore Cart", "Drill Rig", "Blast Team",
               "Excavator", "Laser Bore", "Quantum Auger", "Magma Tap",
               "Plasma Lance", "Gravity Well", "Rift Engine", "Star Forge",
-              "Quasar Drive", "Singularity Core"]
+              "Quasar Drive", "Singularity Core", "Neutron Press",
+              "Event Horizon", "Dark Matter Rig", "Multiverse Drill",
+              "Big Bang Core"]
 LAYER_NAMES = ["Topsoil", "Clay", "Limestone", "Granite",
                "Obsidian", "Magma", "Crystal", "Neutronium",
                "Antimatter", "Singularity", "Genesis", "The Void"]
