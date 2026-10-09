@@ -50,6 +50,12 @@ jobs:
             echo "::error::CIQ_DEVELOPER_KEY did not decode to a key"
             exit 1
           fi
+          # monkeyc only says "Unable to decode key" halfway through a build,
+          # so reject a secret that is not PKCS#8 DER (PEM, PKCS#1, truncated).
+          if ! openssl pkey -inform DER -in build/developer_key.der -noout; then
+            echo "::error::CIQ_DEVELOPER_KEY is not a PKCS#8 DER private key - see README"
+            exit 1
+          fi
 
       - name: Check the code against its own invariants
         run: tools/verify.sh
