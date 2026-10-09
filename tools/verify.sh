@@ -36,3 +36,7 @@ echo "==> the round-screen layout"
 
 echo "==> the difficulty curve still resolves"
 "$PYTHON" "$ROOT/tools/simulate_economy.py" --hours 2 --taps 1 | tail -n 9
+
+echo
+echo "==> no delegate re-fires a tap as a select"
+"$PYTHON" "$ROOT/tools/check_input.py"
