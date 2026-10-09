@@ -20,6 +20,8 @@ KEY="${CIQ_KEY:-$BUILD/developer_key.der}"
 DEVICES_DIR="$BUILD/devices"
 TYPECHECK="${CIQ_TYPECHECK:-3}"
 SDK_INDEX="https://developer.garmin.com/downloads/connect-iq/sdks"
+APP_NAME="DeepShaft"
+
 # The Windows Store ships a `python3` stub that only prints an advert, so the
 # interpreter is probed rather than just located.
 if [ -z "${PYTHON:-}" ]; then
@@ -96,10 +98,11 @@ echo "==> generating device configurations"
 
 status=0
 for device in "${targets[@]}"; do
+    out="$BUILD/$APP_NAME-$device.prg"
     echo "==> building $device"
     if java -jar "$SDK/bin/monkeybrains.jar" \
         --jungles "$ROOT/monkey.jungle" \
-        --output "$BUILD/$device.prg" \
+        --output "$out" \
         --apidb "$SDK/bin/api.db" \
         --apimir "$SDK/bin/api.mir" \
         --override-devices-json "$DEVICES_DIR" \
@@ -107,7 +110,7 @@ for device in "${targets[@]}"; do
         --private-key "$KEY" \
         --typecheck "$TYPECHECK" \
         --warn; then
-        echo "    $BUILD/$device.prg ($(wc -c <"$BUILD/$device.prg") bytes)"
+        echo "    $out ($(wc -c <"$out") bytes)"
     else
         status=1
     fi

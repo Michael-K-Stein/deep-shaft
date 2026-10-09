@@ -19,6 +19,9 @@
     <string id="OptHaptics">Haptics</string>
     <string id="OptWipe">Wipe Save</string>
     <string id="OptWipeSub">Erase everything</string>
+    <string id="OptTip">Tip Jar</string>
+    <string id="OptTipSub">Support the miner</string>
+    <string id="OptTipNoPhone">Connect your phone to leave a tip</string>
 
     <!-- Crew screen -->
     <string id="CrewTitle">Crew</string>
@@ -94,6 +97,24 @@
     <string id="Miner12">Star Forge</string>
     <string id="Miner13">Quasar Drive</string>
     <string id="Miner14">Singularity Core</string>
-    <string id="Miner15">Galactic Maw</string>
-    <string id="Miner16">Aeon Engine</string>
+    <string id="Miner15">Neutron Press</string>
+    <string id="Miner16">Event Horizon</string>
+    <string id="Miner17">Dark Matter Rig</string>
+    <string id="Miner18">Multiverse Drill</string>
+    <string id="Miner19">Big Bang Core</string>
+    <string id="Miner20">Chrono Forge</string>
+    <string id="Miner21">Quantum Foundry</string>
+    <string id="Miner22">Nebula Reactor</string>
+    <string id="Miner23">Wormhole Tap</string>
+    <string id="Miner24">Antimatter Core</string>
+    <string id="Miner25">Dimensional Rift</string>
+    <string id="Miner26">Cosmic Loom</string>
+    <string id="Miner27">Reality Engine</string>
+    <string id="Miner28">Omniverse Forge</string>
+    <string id="Miner29">Void Harvester</string>
+    <string id="Miner30">Timeless Vault</string>
+    <string id="Miner31">Infinity Drill</string>
+    <string id="Miner32">Paradox Engine</string>
+    <string id="Miner33">The First Cause</string>
+    <string id="Miner34">The Last Digger</string>
 </strings>

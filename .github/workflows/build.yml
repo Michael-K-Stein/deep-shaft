@@ -30,6 +30,6 @@ jobs:
 
       - uses: actions/upload-artifact@v5
         with:
-          name: deep-shaft-prg
+          name: idle-garmin-prg
           path: build/*.prg
           if-no-files-found: error

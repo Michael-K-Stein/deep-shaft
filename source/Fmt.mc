@@ -6,10 +6,10 @@ import Toybox.Math;
 //! digits plus a short magnitude suffix.
 module Fmt {
 
-    //! Suffixes for 10^3 .. 10^45. Beyond that the game is over anyway.
+    //! Suffixes for 10^3 .. 10^60. Beyond that the game is over anyway.
     const SUFFIX = [
         "", "K", "M", "B", "T", "Qa", "Qi", "Sx", "Sp", "Oc", "No", "Dc",
-        "Ud", "Dd", "Td", "Qd"
+        "Ud", "Dd", "Td", "Qd", "Qad", "Sxd", "Spd", "Ocd", "Nod"
     ];
 
     //! Split a value into its digits and its magnitude suffix, e.g.

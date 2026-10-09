@@ -1,9 +1,13 @@
 import Toybox.Lang;
 import Toybox.WatchUi;
+import Toybox.Communications;
 
 //! The hub menu and the shared push helpers. Keeping the push sites in one
 //! place means every screen is reachable from every other one the same way.
 module MainMenu {
+
+    //! Replace with wherever tips should actually land (Ko-fi, PayPal.me, etc).
+    const TIP_URL = "https://ko-fi.com/deepshaft";
 
     function push() as Void {
         var menu = new WatchUi.Menu2({ :title => Rez.Strings.MenuTitle });
@@ -42,7 +46,22 @@ module MainMenu {
             Rez.Strings.OptHaptics, null, :haptics, haptics, {}));
         menu.addItem(new WatchUi.MenuItem(
             Rez.Strings.OptWipe, Rez.Strings.OptWipeSub, :wipe, {}));
+        menu.addItem(new WatchUi.MenuItem(
+            Rez.Strings.OptTip, Rez.Strings.OptTipSub, :tip, {}));
         WatchUi.pushView(menu, new OptionsMenuDelegate(), WatchUi.SLIDE_LEFT);
+    }
+
+    //! Hands off to the paired phone's browser. There is no on-watch payment
+    //! path in Connect IQ, so a tip is always a link opened on the phone.
+    function openTip() as Void {
+        if (!(Toybox has :Communications) || !(Communications has :openWebPage)) {
+            WatchUi.pushView(
+                new WatchUi.Confirmation(Names.get(Rez.Strings.OptTipNoPhone)),
+                new SimpleDelegate(),
+                WatchUi.SLIDE_UP);
+            return;
+        }
+        Communications.openWebPage(TIP_URL, null, {});
     }
 }
 
@@ -91,6 +110,8 @@ class OptionsMenuDelegate extends WatchUi.Menu2InputDelegate {
                 new WatchUi.Confirmation(Names.get(Rez.Strings.OptWipe)),
                 new WipeConfirmationDelegate(),
                 WatchUi.SLIDE_UP);
+        } else if (id == :tip) {
+            MainMenu.openTip();
         }
     }
 }

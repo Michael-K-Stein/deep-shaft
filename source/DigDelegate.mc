@@ -20,7 +20,14 @@ class DigDelegate extends WatchUi.BehaviorDelegate {
         return true;
     }
 
-    function onSelect() as Boolean {
+    //! Hangs off the raw key event, not onSelect: on this hardware a screen
+    //! tap also arrives as the select behaviour, with no coordinates, which
+    //! would dig on every tap regardless of whether it hit the button.
+    //! onKey(KEY_ENTER) is reached only by the physical START button.
+    function onKey(event as WatchUi.KeyEvent) as Boolean {
+        if (event.getKey() != WatchUi.KEY_ENTER) {
+            return false;
+        }
         if (mView.dig()) {
             Haptics.confirm();
         }
